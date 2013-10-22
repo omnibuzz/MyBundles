@@ -47,3 +47,4 @@ FileConfig := MODULE(XferOp.Interfaces.CSVFile)
 END;
 
 XferOp.ImportFrom(Config).CSVFile('/var/lib/HPCCSystems/mydropzone/Test.csv','myloc::test',,FileConfig);
+
