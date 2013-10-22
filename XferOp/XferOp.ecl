@@ -28,7 +28,7 @@ EXPORT XferOp := MODULE
     EXPORT CSVFile    := INTERFACE(File)
       EXPORT INTEGER  MaxRecordSize     := 8192;
       EXPORT STRING   LineSeparator     := '\\n,\\r\\n';
-      EXPORT STRING   Quote             := '"';
+      EXPORT STRING   Quote             := '\'';
     END;
 
     EXPORT FixedWidth := INTERFACE(File)
