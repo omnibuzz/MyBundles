@@ -1,7 +1,9 @@
 XferOp
 ===========
 
-Simplified Interface for file transfer between landing zone and the cluster
+Simplified Interface for file transfer between landing zone and the cluster.
+(Simplify for the most common configurations). Store as modules for other configurations.  
+
 
 Here are some examples
 
@@ -33,18 +35,24 @@ Default Exports:
 XferOp.ExportTo().StitchedFile('myloc::test','/var/lib/HPCCSystems/mydropzone/Test.csv');
 
 
-If you want to override the default settings, you can implement the configuration interfaces (with just the overriden configs and call the function). Here is an example:
+If you want to override the default settings, you can implement the configuration interfaces (with just the overriden configs and call the function). 
+Here is an example. You can create different modules for different configurations and re-use as required:
 
 IMPORT Bundles.XferOp;
 
-Config := MODULE(XferOp.Interfaces.Config)
-  EXPORT INTEGER  TimeOut  := 0;
+Config1 := MODULE(XferOp.Interfaces.Config)
+  EXPORT STRING   LandingZoneIP             := '10.0.0.1';
+
+  EXPORT STRING   ClusterName               := 'Mythor400';    
+
+  EXPORT INTEGER  TimeOut                   := 0;
 END;
 
 FileConfig := MODULE(XferOp.Interfaces.CSVFile)
   EXPORT STRING Quote := '\"';
+  
   EXPORT BOOLEAN OverWriteIfExists := TRUE;
 END;
 
-XferOp.ImportFrom(Config).CSVFile('/var/lib/HPCCSystems/mydropzone/Test.csv','myloc::test',,FileConfig);
+XferOp.ImportFrom(Config1).CSVFile('/var/lib/HPCCSystems/mydropzone/Test.csv','myloc::test',,FileConfig);
 
