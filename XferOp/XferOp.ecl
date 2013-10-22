@@ -1,6 +1,16 @@
 IMPORT STD;
 
 EXPORT XferOp := MODULE
+  EXPORT Bundle := MODULE(Std.BundleBase)
+    EXPORT Name       := 'XferOp';
+    EXPORT Description     := 'Simplifying file transfer operations to and from landing zone.';
+    EXPORT Authors       := ['Omnibuzz'];
+    EXPORT License       := 'http://www.apache.org/licenses/LICENSE-2.0';
+    EXPORT Copyright     := 'Use, Improve, Extend, Distribute';
+    EXPORT DependsOn     := [];
+    EXPORT Version       := '1.0.1';
+  END; 
+  
   EXPORT Interfaces := MODULE
     EXPORT Config     := INTERFACE
       EXPORT STRING   LandingZoneIP             := Std.Str.SplitWords(Std.System.Thorlib.DaliServer(),':')[1];
