@@ -1,25 +1,49 @@
-QueueOp
+XferOp
 ===========
 
-Single Reader Multiple writer Queue Implementation for reading and writing datasets.
+Simplified Interface for file transfer between landing zone and the cluster
+
+Here are some examples
+
+Default Imports:
+1. To preview a file before importing
+
+XferOp.ImportFrom().Preview('/var/lib/HPCCSystems/mydropzone/Test.csv');
 
 
-Enqueue(Dataset, QueueName) - Writes the dataset as a new Item to the bottom of the queue. There is no create queue. The first enqueue will automatically create the queue. 
+2. To import a csv file from drop zone to HPCC
 
-Peek(QueueName) - Peek into the item at the top of the queue without removing the item from the queue
+XferOp.ImportFrom().CSVFile('/var/lib/HPCCSystems/mydropzone/Test.csv','myloc::test');
 
-Dequeue(QueueName,LocationPrefix) - Will dequeue the top item from the queue and place it in the locationprefix specified. It will return the file name of the dequeued item.
-
-DequeueAll(QueueName,LocationPrefix) - Will merge all the items in the queue at that point in time and place it as a single file in the locationprefix specified. It will return the file name of the merged dequeued items.
-
-QueueLength(QueueName) - Will give the number of items in the queue. 
-
-ClearQueue(QueueName,Force) - Will clear the queue deleting the items it contains. Will fail if the queue is locked for a dequeue. Force will override and clear the queue anyways (may destabilize other jobs and should be used only after understanding the implications).   
-
-*** Since this is a single reader queue only one instance of either Dequeue, DequeueAll, ClearQueue can access the queue at any point in time. 
-
-*** Simultaneous access to dequeue or clear will fail one of the process. 
-
-*** You can use the RECOVERY work flow service to implement re-try attempts based on your requirements.
+XferOp.ImportFrom().CSVFile('/var/lib/HPCCSystems/mydropzone/Test.csv','myloc::test','|'); // | is the field separator
 
 
+3. To import a fixed width file from drop zone to HPCC
+
+XferOp.ImportFrom().FixedWidth('/var/lib/HPCCSystems/mydropzone/Test.txt','myloc::test1',1024);// 1024 is the file width
+
+
+4. To import a XML file from drop zone to HPCC
+
+XferOp.ImportFrom().XMLFile('/var/lib/HPCCSystems/mydropzone/Test.xml','myloc::test2','rowtag');
+
+
+Default Exports:
+1. To export a logical file from HPCC to the drop zone
+XferOp.ExportTo().StitchedFile('myloc::test','/var/lib/HPCCSystems/mydropzone/Test.csv');
+
+
+If you want to override the default settings, you can implement the configuration interfaces (with just the overriden configs and call the function). Here is an example:
+
+IMPORT Bundles.XferOp;
+
+Config := MODULE(XferOp.Interfaces.Config)
+  EXPORT INTEGER  TimeOut  := 0;
+END;
+
+FileConfig := MODULE(XferOp.Interfaces.CSVFile)
+  EXPORT STRING Quote := '\"';
+  EXPORT BOOLEAN OverWriteIfExists := TRUE;
+END;
+
+XferOp.ImportFrom(Config).CSVFile('/var/lib/HPCCSystems/mydropzone/Test.csv','myloc::test',,FileConfig);
