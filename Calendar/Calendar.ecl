@@ -77,18 +77,18 @@ EXPORT Calendar := MODULE
     UNSIGNED1 SecPos        := STD.Str.Find(format,'ss',1);
 
     // Calculate the DateParts 
-    UNSIGNED2 Year2Digits   := (UNSIGNED2)dt[yr2Pos..yr2Pos + 1];
-    UNSIGNED2 Year          := MAP(  Yr4Pos>0 => (UNSIGNED2)dt[yr4Pos..yr4Pos + 3],
+    UNSIGNED2 Year2Digits   := (UNSIGNED2)(dt[yr2Pos..yr2Pos + 1]);
+    UNSIGNED2 Year          := MAP(  Yr4Pos>0 => (UNSIGNED2)(dt[yr4Pos..yr4Pos + 3]),
                                     Yr2Pos>0 => ConvertYr2ToYr4(Year2Digits),
                                     0);
     UNSIGNED1 Month         := MAP(  MonthNamePos > 0 => GetMonthNumber((STRING3) Dt[MonthNamePos..MonthNamePos + 2]),
-                                    MonthPos > 0  => (UNSIGNED1)dt[MonthPos..MonthPos + 1],
+                                    MonthPos > 0  => (UNSIGNED1)(dt[MonthPos..MonthPos + 1]),
                                     0); 
-    UNSIGNED1 Day           := IF(DayPos>0,(UNSIGNED1)dt[DayPos..DayPos + 1],0); 
+    UNSIGNED1 Day           := IF(DayPos>0,(UNSIGNED1)(dt[DayPos..DayPos + 1]),0); 
 
-    UNSIGNED1 Hour          := IF(HourPos>0,(UNSIGNED1)dt[HourPos..HourPos + 1],0); 
-    UNSIGNED1 Minute        := IF(MinPos>0,(UNSIGNED1)dt[MinPos..MinPos + 1],0); 
-    UNSIGNED1 Second        := IF(SecPos>0,(UNSIGNED1)dt[SecPos..SecPos + 1],0);
+    UNSIGNED1 Hour          := IF(HourPos>0,(UNSIGNED1)(dt[HourPos..HourPos + 1]),0); 
+    UNSIGNED1 Minute        := IF(MinPos>0,(UNSIGNED1)(dt[MinPos..MinPos + 1]),0); 
+    UNSIGNED1 Second        := IF(SecPos>0,(UNSIGNED1)(dt[SecPos..SecPos + 1]),0);
 
     InvalidDatePart         := IsInvalidDate(Year,Month,Day);
     InvalidTimePart         := IsInvalidTime(Hour,Minute,Second);
@@ -119,9 +119,9 @@ EXPORT Calendar := MODULE
     EXPORT STRING      DayOfWeek          :=   GetDayOfWeek(dtInternal.GregorianDayCount);  
     EXPORT UNSIGNED1   Day                :=   dtInternal.GregorianDate.Day;
 
-    EXPORT UNSIGNED1   Second             :=   (UNSIGNED1) dtInternal.DaySecsElapsed%60;
+    EXPORT UNSIGNED1   Second             :=   (UNSIGNED1) (dtInternal.DaySecsElapsed%60);
     EXPORT UNSIGNED1   Minute             :=   (UNSIGNED1) ((dtInternal.DaySecsElapsed - Second)%3600)/60;
-    EXPORT UNSIGNED1   Hour               :=   (UNSIGNED1) dtInternal.DaySecsElapsed/3600;
+    EXPORT UNSIGNED1   Hour               :=   (UNSIGNED1) (dtInternal.DaySecsElapsed/3600);
     EXPORT UNSIGNED2   DayOfYear          :=   GetDayOfYear(Year,Month,Day);
     EXPORT Date       DatePart            :=   dtInternal.DaysSince1900;
     EXPORT Time      TimePart             :=   dtInternal.DaySecsElapsed;
@@ -159,7 +159,7 @@ EXPORT Calendar := MODULE
     SELF.Day                :=   dtInternal.GregorianDate.Day,
     SELF.Hour               :=   (UNSIGNED1) (dtInternal.DaySecsElapsed/3600),
     SELF.Minute             :=   (UNSIGNED1) ((dtInternal.DaySecsElapsed%3600)/60),
-    SELF.Second             :=   (UNSIGNED1) dtInternal.DaySecsElapsed%60,
+    SELF.Second             :=   (UNSIGNED1) (dtInternal.DaySecsElapsed%60),
     SELF.Year2              :=   dtInternal.GregorianDate.Year%100,
     SELF.MonthName          :=   GetMonthName(dtInternal.GregorianDate.Month);
     SELF.DayOfWeek          :=   GetDayOfWeek(dtInternal.GregorianDayCount);
@@ -184,8 +184,8 @@ EXPORT Calendar := MODULE
     RETURN CASE(datePart,   DatePartEnum.Years    => dt1Object.Year - dt2Object.Year,
                             DatePartEnum.Months   => dt1Object.Year*12 + dt1Object.Month - (dt2Object.Year*12 + dt2Object.Month),
                             DatePartEnum.Days     => dt1Object.GregorianDayCount - dt2Object.GregorianDayCount,
-                            DatePartEnum.Hours    => (INTEGER)(startDate-endDate)/3600,    
-                            DatePartEnum.Minutes  => (INTEGER)(startDate-endDate)/60,
+                            DatePartEnum.Hours    => (INTEGER)((startDate-endDate)/3600),    
+                            DatePartEnum.Minutes  => (INTEGER)((startDate-endDate)/60),
                             DatePartEnum.Seconds  => (startDate-endDate),
                             0);
   END;
@@ -198,7 +198,7 @@ EXPORT Calendar := MODULE
                                                                   dtObject.Hour,
                                                                   dtObject.Minute,
                                                                   dtObject.Second),
-                            DatePartEnum.Months   => CreateDTFrom(dtObject.Year + (INTEGER2) (dtObject.Month + UnitsToAdd)/12,
+                            DatePartEnum.Months   => CreateDTFrom(dtObject.Year + (INTEGER2) ((dtObject.Month + UnitsToAdd)/12),
                                                                   (dtObject.Month + UnitsToAdd)%12,
                                                                   dtObject.Day,
                                                                   dtObject.Hour,
